@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Frontend</title>
+    <style>
+        /* CSS styles go here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        #search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        #search-input {
+            padding: 0.5rem;
+            width: 70%;
+            border: 1px solid #ccc;
+        }
+
+        #search-button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #results {
+            border: 1px solid #ccc;
+            padding: 1rem;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Research Frontend</h1>
+    </header>
+    <main>
+        <section id="search">
+            <input type="text" id="search-input" placeholder="Enter your research topic">
+            <button id="search-button">Search</button>
+        </section>
+        <section id="results">
+            <!-- Search results will be displayed here -->
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Your Name</p>
+    </footer>
+    <script>
+        // JavaScript code goes here
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchButton = document.getElementById("search-button");
+            const searchInput = document.getElementById("search-input");
+            const resultsContainer = document.getElementById("results");
+
+            searchButton.addEventListener("click", () => {
+                const keyword = searchInput.value.trim();
+
+                if (keyword) {
+                    fetchSearchResults(keyword);
+                }
+            });
+
+            async function fetchSearchResults(keyword) {
+                try {
+                    // Define the API endpoint and request payload
+                    const apiUrl = 'https://api.gyanibooks.com/search_publication/';
+                    const payload = {
+                        keyword: keyword,
+                        limit: 10,
+                    };
+
+                    // Make a POST request to the API
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    // Parse the JSON response
+                    const responseData = await response.json();
+
+                    // Display the search results
+                    displayResults(responseData);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+
+            function displayResults(responseData) {
+                const resultsData = responseData.data; // Access the "data" property
+
+                // Clear previous results
+                resultsContainer.innerHTML = '';
+
+                // Display each result
+                resultsData.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('result-item');
+                    resultItem.innerHTML = `
+                        <h3>${result.title}</h3>
+                        <p>${result.description}</p>
+                        <a href="${result.link}" target="_blank">Read More</a>
+                    `;
+                    resultsContainer.appendChild(resultItem);
+                   // console.log(data);
+                   console.log(responseData);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
